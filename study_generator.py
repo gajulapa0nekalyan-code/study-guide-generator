@@ -13,12 +13,51 @@ from models import StudyPack
 
 load_dotenv()
 
+
+# ------------------------------------------------
+# Get Groq API Key
+# ------------------------------------------------
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+# Streamlit Cloud Secrets
+if not GROQ_API_KEY:
+    try:
+        import streamlit as st
+
+        GROQ_API_KEY = st.secrets.get("GROQ_API_KEY")
+
+    except Exception:
+        GROQ_API_KEY = None
+
 
 if not GROQ_API_KEY:
     raise ValueError(
-        "GROQ_API_KEY not found. Check your .env file."
+        "GROQ_API_KEY not found. "
+        "Add GROQ_API_KEY to your .env file locally "
+        "or Streamlit Secrets when deployed."
     )
+
+
+# ------------------------------------------------
+# Groq Model
+# ------------------------------------------------
+
+GROQ_MODEL = os.getenv("GROQ_MODEL")
+
+if not GROQ_MODEL:
+    try:
+        import streamlit as st
+
+        GROQ_MODEL = st.secrets.get("GROQ_MODEL")
+
+    except Exception:
+        GROQ_MODEL = None
+
+
+if not GROQ_MODEL:
+    # Your current working model
+    GROQ_MODEL = "openai/gpt-oss-20b"
 
 
 # ------------------------------------------------
@@ -64,16 +103,19 @@ Beginner:
 - Simple explanations
 - Basic terminology
 - Easy questions
+- Use beginner-friendly examples
 
 Intermediate:
 - Moderate explanations
 - Conceptual questions
 - Moderate difficulty
+- Include practical examples
 
 Advanced:
 - Detailed explanations
 - Application-based questions
 - Challenging questions
+- Include deeper technical reasoning
 
 For every MCQ provide:
 
@@ -161,6 +203,7 @@ Rules:
 - Provide useful glossary terms
 - Provide a logical study order
 - Keep the content based on the supplied study material
+- Make sure the difficulty level affects the complexity of the output
 """
 
 
@@ -169,8 +212,7 @@ Rules:
     # ------------------------------------------------
 
     response = client.chat.completions.create(
-
-        model="openai/gpt-oss-20b",
+        model=GROQ_MODEL,
 
         messages=[
             {
