@@ -1,0 +1,8 @@
+streamlit
+langchain
+langchain-groq
+pypdf
+python-dotenv
+pydantic
+reportlab
+pandas
