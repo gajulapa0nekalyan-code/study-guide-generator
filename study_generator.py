@@ -24,9 +24,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     try:
         import streamlit as st
-
         GROQ_API_KEY = st.secrets.get("GROQ_API_KEY")
-
     except Exception:
         GROQ_API_KEY = None
 
@@ -34,13 +32,12 @@ if not GROQ_API_KEY:
 if not GROQ_API_KEY:
     raise ValueError(
         "GROQ_API_KEY not found. "
-        "Add GROQ_API_KEY to your .env file locally "
-        "or Streamlit Secrets when deployed."
+        "Add GROQ_API_KEY to Streamlit Cloud Secrets."
     )
 
 
 # ------------------------------------------------
-# Groq Model
+# Get Groq Model
 # ------------------------------------------------
 
 GROQ_MODEL = os.getenv("GROQ_MODEL")
@@ -48,15 +45,12 @@ GROQ_MODEL = os.getenv("GROQ_MODEL")
 if not GROQ_MODEL:
     try:
         import streamlit as st
-
         GROQ_MODEL = st.secrets.get("GROQ_MODEL")
-
     except Exception:
         GROQ_MODEL = None
 
 
 if not GROQ_MODEL:
-    # Your current working model
     GROQ_MODEL = "openai/gpt-oss-20b"
 
 
@@ -74,9 +68,6 @@ client = Groq(
 # ------------------------------------------------
 
 def generate_study_pack(content, difficulty="beginner"):
-    """
-    Generate a structured study pack using Groq.
-    """
 
     prompt = f"""
 You are an expert educational AI assistant.
@@ -103,19 +94,19 @@ Beginner:
 - Simple explanations
 - Basic terminology
 - Easy questions
-- Use beginner-friendly examples
+- Beginner-friendly examples
 
 Intermediate:
 - Moderate explanations
 - Conceptual questions
 - Moderate difficulty
-- Include practical examples
+- Practical examples
 
 Advanced:
 - Detailed explanations
 - Application-based questions
 - Challenging questions
-- Include deeper technical reasoning
+- Deeper technical reasoning
 
 For every MCQ provide:
 
@@ -202,10 +193,9 @@ Rules:
 - Exactly 5 short-answer questions
 - Provide useful glossary terms
 - Provide a logical study order
-- Keep the content based on the supplied study material
-- Make sure the difficulty level affects the complexity of the output
+- Keep content based on the supplied study material
+- Difficulty must measurably affect output complexity
 """
-
 
     # ------------------------------------------------
     # Groq API Call
@@ -237,20 +227,17 @@ Rules:
         }
     )
 
-
     # ------------------------------------------------
     # Get AI Response
     # ------------------------------------------------
 
     result = response.choices[0].message.content
 
-
     # ------------------------------------------------
-    # Convert JSON String to Python Dictionary
+    # Convert JSON String
     # ------------------------------------------------
 
     try:
-
         data = json.loads(result)
 
     except json.JSONDecodeError as error:
@@ -259,13 +246,11 @@ Rules:
             f"Groq returned invalid JSON: {error}"
         )
 
-
     # ------------------------------------------------
-    # Convert Dictionary to StudyPack
+    # Validate Study Pack
     # ------------------------------------------------
 
     try:
-
         study_pack = StudyPack.model_validate(data)
 
     except Exception as error:
@@ -273,10 +258,5 @@ Rules:
         raise ValueError(
             f"Invalid study pack structure: {error}"
         )
-
-
-    # ------------------------------------------------
-    # Return Structured Object
-    # ------------------------------------------------
 
     return study_pack

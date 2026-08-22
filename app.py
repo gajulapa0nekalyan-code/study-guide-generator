@@ -1,21 +1,9 @@
 import streamlit as st
+
+from pdf_processor import extract_pdf_text
 from study_generator import generate_study_pack
 
-
-from pdf_processor import (
-    extract_pdf_text
-)
-
-
-from study_generator import (
-    generate_study_pack
-)
-
-
-from exporters import (
-    create_pdf,
-    create_mcq_csv
-)
+from exporters import create_pdf, create_mcq_csv
 
 
 # ------------------------------------------------
