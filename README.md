@@ -1,6 +1,6 @@
 ﻿# capstone_project
 
-# 📚 AI Study Guide Generator
+# 📚 AI Powered Study Guide Generator
 
 > **Upload any lecture PDF, get a complete study pack.**
 
